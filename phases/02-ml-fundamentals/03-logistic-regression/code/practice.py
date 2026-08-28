@@ -7,7 +7,7 @@ y = []
 
 random.seed(42)
                     # PERSISTENCE
-
+                    # Success requires persistence.
 def sigmoid(z):
     z = max(-500, min(500, z))  #  z only in interval [-500,500]
     return 1 / (1 + math.e ** (-z))
@@ -58,3 +58,15 @@ class LogisticRegression:
             p = self.predict_probability(X[i])
             total += y[i] * math.log(p) + (1 - y[i]) * math.log(1 - p)
         return -total / n
+
+    def fit(self,X,Y,epochs=1000,times_print=200):
+        n=len(y)
+        n_features=X[0]
+        for epoch in range(epochs):
+            dw = [0.0] * n_features
+            db=0.0
+            for i in range(n):
+                p=self.predict_probability(X[i])
+                erorr=p-Y[i]
+                
+                

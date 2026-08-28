@@ -2,43 +2,12 @@ import random
 
 TRUE_W = 3.0
 TRUE_B = 7.0
-N_SAMPLES = 10
+N_SAMPLES = 100
 
 X = [random.randint(0, 10) for _ in range(N_SAMPLES)]
 Y = [TRUE_W * x + TRUE_B + random.gauss(0, 2.0) for x in X]
-
-
-class linearRegression:
-    def __init__(self, learning_rate=0.01):
-        self.w = 0.0
-        self.b = 0.0
-        self.lr = learning_rate
-        self.cost_history = []
-
-    def predict(self, X):
-        return [self.w * x + self.b for x in X]
-
-    def compute_cost(self, X, Y):
-        n = len(Y)
-        predictions = self.predict(X)
-        cost = (
-            sum((y_actual - y_pre) ** 2 for y_actual, y_pre in zip(Y, predictions)) / n
-        )
-        return cost
-
-    def compute_gradients(self, X, Y):
-        predictions = self.predict(X)
-
-
-import random
-
-TRUE_W = 3.0
-TRUE_B = 7.0
-N_SAMPLES = 10
-
-X = [random.randint(0, 10) for _ in range(N_SAMPLES)]
-Y = [TRUE_W * x + TRUE_B + random.gauss(0, 2.0) for x in X]
-
+# print(X)
+# print(Y)
 
 class linearRegression:
     def __init__(self, learning_rate=0.01):
@@ -80,5 +49,5 @@ class linearRegression:
                 )
         return self
 
-model = linearRegression(learning_rate=0.001)
-model.fit(X, Y, epoch=1000, print_every=10)
+# model = linearRegression(learning_rate=0.001)
+# model.fit(X, Y, epoch=1000, print_every=10)
