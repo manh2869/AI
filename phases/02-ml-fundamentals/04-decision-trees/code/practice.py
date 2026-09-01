@@ -30,8 +30,22 @@ def entropy(labels):
     return -sum((s / n) * math.log2(s / n) for s in count.values() if s > 0)
 
 
-labels = [1, 1, 1, 0, 0]
-labels2 = [1, 1, 1, 1, 1, 1, 0, 0, 0, 0]
+# labels = [1, 1, 1, 0, 0]
+# print(entropy(labels2))
 
-print(gini_impurity(labels))
-print(entropy(labels2))
+
+def information_gain(parent, left, right, criterion="gini"):
+    measure = gini_impurity if criterion == "gini" else entropy
+    n = len(parent)
+    n_l = len(left)
+    n_r = len(right)
+    if len(left) == 0 or len(right) == 0:
+        return 0.0
+    child_impurity = n_l / n * measure(left) + n_r / n * measure(right)
+    return measure(parent) - child_impurity
+
+
+labels2 = [1, 1, 1, 0, 0]
+
+print(information_gain(labels2, [1, 1, 0], [0, 1], "entropy")) #very bad (a little bit of information)
+print(information_gain(labels2, [1, 1, 0], [0, 1], "gini"))

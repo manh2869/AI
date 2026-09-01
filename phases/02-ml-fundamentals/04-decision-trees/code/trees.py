@@ -30,7 +30,7 @@ def information_gain(parent_labels, left_labels, right_labels, criterion="gini")
     n_left = len(left_labels)
     n_right = len(right_labels)
     if n_left == 0 or n_right == 0:
-        return 0.0
+        return 0.0  
     parent_impurity = measure(parent_labels)
     child_impurity = (
         (n_left / n) * measure(left_labels)
