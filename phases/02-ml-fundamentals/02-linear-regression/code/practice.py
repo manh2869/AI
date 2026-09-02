@@ -2,12 +2,12 @@ import random
 
 TRUE_W = 3.0
 TRUE_B = 7.0
-N_SAMPLES = 100
+N_SAMPLES = 10
 
 X = [random.randint(0, 10) for _ in range(N_SAMPLES)]
 Y = [TRUE_W * x + TRUE_B + random.gauss(0, 2.0) for x in X]
-# print(X)
-# print(Y)
+print(X)
+print(Y)
 
 class linearRegression:
     def __init__(self, learning_rate=0.01):
