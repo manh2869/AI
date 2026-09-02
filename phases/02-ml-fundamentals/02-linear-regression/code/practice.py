@@ -4,8 +4,8 @@ TRUE_W = 3.0
 TRUE_B = 7.0
 N_SAMPLES = 10
 
-X = [random.randint(0, 10) for _ in range(N_SAMPLES)]
-Y = [TRUE_W * x + TRUE_B + random.gauss(0, 2.0) for x in X]
+X = [random.randint(0, 10) for _ in range(N_SAMPLES)]# [8, 0, 5, 10, 2, 10, 0, 0, 5, 3]
+Y = [TRUE_W * x + TRUE_B + random.gauss(0, 2.0) for x in X]  #[6.607720721493762, 31.635725873320556, 25.550699016527105, 12.622575576481347, 19.27230970661095, ....](10 numbers)
 
 # from sklearn.datasets import make_regression
 # X, Y = make_regression(n_samples=10, n_features=1, noise=2.0,random_state=42)
@@ -29,7 +29,7 @@ class linearRegression:
             sum((y_actual - y_pre) ** 2 for y_actual, y_pre in zip(Y, predictions)) / n
         )
         return cost
-    
+
     def compute_gradients(self, X, Y):
         predictions = self.predict(X)
         n = len(Y)
