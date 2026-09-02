@@ -45,7 +45,33 @@ def information_gain(parent, left, right, criterion="gini"):
     return measure(parent) - child_impurity
 
 
-labels2 = [1, 1, 1, 0, 0]
+labels2 = [11, 12, 13, 51, 52]
 
-print(information_gain(labels2, [1, 1, 0], [0, 1], "entropy")) #very bad (a little bit of information)
-print(information_gain(labels2, [1, 1, 0], [0, 1], "gini"))
+# print(information_gain(labels2, [1, 1, 0], [0, 1], "entropy")) #very bad (a little bit of information)
+# print(information_gain(labels2, [1, 1, 0], [0, 1], "gini"))
+
+
+def variance(labels):
+    n = len(labels)
+    if n == 0:
+        return 0.0
+    mean = sum(labels) / n
+
+    return (sum((s - mean) ** 2 for s in labels)) / n
+
+
+def variance_reduction(prarent_value, child_left, child_right):
+    if len(child_left) == 0 or len(child_right) == 0:
+        return 0.0
+    var_p = variance(prarent_value)
+    n = len(prarent_value)
+    var_l = variance(child_left)
+    var_r = variance(child_right)
+    n_l = len(child_left)
+    n_r = len(child_right)
+    return var_p - (n_l / n * var_l + n_r / n * var_r)
+
+
+# print(variance(labels2))
+# print(variance_reduction(labels2, [11, 51, 13], [12, 52]))   small var -> bad split
+# print(variance_reduction(labels2, [11, 12, 13], [51, 52]))    closest var_p -> good split
