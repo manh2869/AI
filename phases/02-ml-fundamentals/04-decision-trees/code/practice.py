@@ -30,7 +30,6 @@ def entropy(labels):
     return -sum((s / n) * math.log2(s / n) for s in count.values() if s > 0)
 
 
-# labels = [1, 1, 1, 0, 0]
 # print(entropy(labels2))
 
 
@@ -45,7 +44,7 @@ def information_gain(parent, left, right, criterion="gini"):
     return measure(parent) - child_impurity
 
 
-labels2 = [11, 12, 13, 51, 52]
+# labels2 = [11, 12, 13, 51, 52]
 
 # print(information_gain(labels2, [1, 1, 0], [0, 1], "entropy")) #very bad (a little bit of information)
 # print(information_gain(labels2, [1, 1, 0], [0, 1], "gini"))
@@ -75,3 +74,14 @@ def variance_reduction(prarent_value, child_left, child_right):
 # print(variance(labels2))
 # print(variance_reduction(labels2, [11, 51, 13], [12, 52]))   small var -> bad split
 # print(variance_reduction(labels2, [11, 12, 13], [51, 52]))    closest var_p -> good split
+
+
+# import sklearn
+from sklearn.tree import DecisionTreeClassifier
+
+labels = [1, 1, 1, 0, 0]
+clf = DecisionTreeClassifier(criterion="entropy")
+
+
+
+print(clf)
