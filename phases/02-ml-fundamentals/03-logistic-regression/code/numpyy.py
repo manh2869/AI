@@ -45,7 +45,15 @@ from sklearn.preprocessing import StandardScaler
 #                 [ 142.00003238]
 #                 [ 132.83489946]
 #                 [  12.13510206]]
-scaler = StandardScaler()
-y_scaler = scaler.fit_transform(y.reshape(-1, 1))
-print(y)
-print(y_scaler)
+
+
+# scaler = StandardScaler()
+# y_scaler = scaler.fit_transform(y.reshape(-1, 1))
+# print(y)
+
+
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test =train_test_split(X, y, test_size=0.2,random_state=42)
+# print(y_scaler)
