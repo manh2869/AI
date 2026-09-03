@@ -1,74 +1,74 @@
-import math
+# import math
 
-# count = {}
+# # count = {}
 
-# count = {"dog": 4, "cat": 1, "fish": 2}
-
-
-# print(count.values())      dict_values([4, 1, 2])
-# print(count.get("dog",2))  # if dog exists return value of dog else return 2
-# print(count["cat"])       1
-# count["manh"]=2 it is push
+# # count = {"dog": 4, "cat": 1, "fish": 2}
 
 
-def gini_impurity(labels):  #  gini impurity of a node
-    if len(labels) == 0:
-        return 0.0
-    count = {}
-    for label in labels:
-        count[label] = count.get(label, 0) + 1
-    return 1 - sum((s / len(labels)) ** 2 for s in count.values())
+# # print(count.values())      dict_values([4, 1, 2])
+# # print(count.get("dog",2))  # if dog exists return value of dog else return 2
+# # print(count["cat"])       1
+# # count["manh"]=2 it is push
 
 
-def entropy(labels):
-    n = len(labels)
-    if len(labels) == 0:
-        return 0.0
-    count = {}
-    for label in labels:
-        count[label] = count.get(label, 0) + 1
-    return -sum((s / n) * math.log2(s / n) for s in count.values() if s > 0)
+# def gini_impurity(labels):  #  gini impurity of a node
+#     if len(labels) == 0:
+#         return 0.0
+#     count = {}
+#     for label in labels:
+#         count[label] = count.get(label, 0) + 1
+#     return 1 - sum((s / len(labels)) ** 2 for s in count.values())
 
 
-# print(entropy(labels2))
+# def entropy(labels):
+#     n = len(labels)
+#     if len(labels) == 0:
+#         return 0.0
+#     count = {}
+#     for label in labels:
+#         count[label] = count.get(label, 0) + 1
+#     return -sum((s / n) * math.log2(s / n) for s in count.values() if s > 0)
 
 
-def information_gain(parent, left, right, criterion="gini"):
-    measure = gini_impurity if criterion == "gini" else entropy
-    n = len(parent)
-    n_l = len(left)
-    n_r = len(right)
-    if len(left) == 0 or len(right) == 0:
-        return 0.0
-    child_impurity = n_l / n * measure(left) + n_r / n * measure(right)
-    return measure(parent) - child_impurity
+# # print(entropy(labels2))
 
 
-# labels2 = [11, 12, 13, 51, 52]
-
-# print(information_gain(labels2, [1, 1, 0], [0, 1], "entropy")) #very bad (a little bit of information)
-# print(information_gain(labels2, [1, 1, 0], [0, 1], "gini"))
-
-
-def variance(labels):
-    n = len(labels)
-    if n == 0:
-        return 0.0
-    mean = sum(labels) / n
-
-    return (sum((s - mean) ** 2 for s in labels)) / n
+# def information_gain(parent, left, right, criterion="gini"):
+#     measure = gini_impurity if criterion == "gini" else entropy
+#     n = len(parent)
+#     n_l = len(left)
+#     n_r = len(right)
+#     if len(left) == 0 or len(right) == 0:
+#         return 0.0
+#     child_impurity = n_l / n * measure(left) + n_r / n * measure(right)
+#     return measure(parent) - child_impurity
 
 
-def variance_reduction(prarent_value, child_left, child_right):
-    if len(child_left) == 0 or len(child_right) == 0:
-        return 0.0
-    var_p = variance(prarent_value)
-    n = len(prarent_value)
-    var_l = variance(child_left)
-    var_r = variance(child_right)
-    n_l = len(child_left)
-    n_r = len(child_right)
-    return var_p - (n_l / n * var_l + n_r / n * var_r)
+# # labels2 = [11, 12, 13, 51, 52]
+
+# # print(information_gain(labels2, [1, 1, 0], [0, 1], "entropy")) #very bad (a little bit of information)
+# # print(information_gain(labels2, [1, 1, 0], [0, 1], "gini"))
+
+
+# def variance(labels):
+#     n = len(labels)
+#     if n == 0:
+#         return 0.0
+#     mean = sum(labels) / n
+
+#     return (sum((s - mean) ** 2 for s in labels)) / n
+
+
+# def variance_reduction(prarent_value, child_left, child_right):
+#     if len(child_left) == 0 or len(child_right) == 0:
+#         return 0.0
+#     var_p = variance(prarent_value)
+#     n = len(prarent_value)
+#     var_l = variance(child_left)
+#     var_r = variance(child_right)
+#     n_l = len(child_left)
+#     n_r = len(child_right)
+#     return var_p - (n_l / n * var_l + n_r / n * var_r)
 
 
 # print(variance(labels2))
@@ -79,9 +79,14 @@ def variance_reduction(prarent_value, child_left, child_right):
 # import sklearn
 from sklearn.tree import DecisionTreeClassifier
 
-labels = [1, 1, 1, 0, 0]
-clf = DecisionTreeClassifier(criterion="entropy")
+X = [[20, 2000], [25, 3000], [30, 4000], [35, 5000], [40, 6000]]
+Y = [0, 0, 1, 1, 1]
+tree = DecisionTreeClassifier()
+tree.fit(X, Y)
 
+from sklearn.tree import plot_tree
+import matplotlib.pyplot as plt
 
+plot_tree(tree)
 
-print(clf)
+plt.savefig("tree.png")
