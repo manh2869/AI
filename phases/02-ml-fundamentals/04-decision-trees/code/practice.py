@@ -81,12 +81,25 @@ from sklearn.tree import DecisionTreeClassifier
 
 X = [[20, 2000], [25, 3000], [30, 4000], [35, 5000], [40, 6000]]
 Y = [0, 0, 1, 1, 1]
+
 tree = DecisionTreeClassifier()
+
 tree.fit(X, Y)
+print(tree.predict([[1000, -10000]]))
 
-from sklearn.tree import plot_tree
-import matplotlib.pyplot as plt
+# print(tree.feature_importances_)
 
-plot_tree(tree)
+# print(tree.get_depth())
 
-plt.savefig("tree.png")
+# print(tree.get_n_leaves())
+# print(tree.tree_.node_count)
+
+
+
+
+# from sklearn.tree import plot_tree
+# import matplotlib.pyplot as plt
+
+# plot_tree(tree)
+
+# plt.savefig("tree.png")
