@@ -3,7 +3,7 @@ import random
 
 
 def l2_distance(a, b):
-    return math.sqrt(sum((ai - bi) ** 2 for ai, bi in zip(a, b)))
+    return math.sqrt(sum((ai - bi) ** 2 for ai, bi in zip(a, b))) 
 
 
 def l1_distance(a, b):
