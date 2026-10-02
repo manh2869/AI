@@ -45,7 +45,8 @@ class GaussianNB:
 
         return self
 
-    def _log_likelihood(self, X):                                       #             class 0    class 1
+    def _log_likelihood(self, X):                
+                                                                        #             class 0    class 1
         n_classes = len(self.classes_)                                  #   people 1│   0     │    0    │
         n_samples = X.shape[0]                                          #   people 2│   0     │    0    │
         log_proba = np.zeros((n_samples, n_classes))                    #   people 3│   0     │    0    │
@@ -80,10 +81,15 @@ class GaussianNB:
         return np.mean(self.predict(X) == y)
     
     
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,random_state=42)
 model = GaussianNB()
 model.fit(X_train, y_train)
 
-print(model.predict([44,60,154,81,135,2.35,0.004]))
+person = [44, 60, 154, 81, 135, 2.35, 0.004]
 
-# print(f"Độ chính xác trên tập test: {model.score(X_test, y_test) * 100:.2f}%")
+model.predict(X)
+model.predict_proba(X)
+
+
+
+print(f"Độ chính xác trên tập test: {model.score(X_test, y_test) * 100:.2f}%")
