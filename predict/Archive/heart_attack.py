@@ -4,12 +4,8 @@ from sklearn.model_selection import train_test_split
 
 df = pd.read_csv("/home/w/AI/predict/Archive/Medicaldataset.csv")
 
-X = df.drop(columns=["Gender","Result"])
+X = df.drop(columns=["Result"])
 y=df["Result"]
-
-# Index(['Age', 'Gender', 'Heart rate', 'Systolic blood pressure',
-#        'Diastolic blood pressure', 'Blood sugar', 'CK-MB', 'Troponin',
-#        'Result'],
 
 class GaussianNB:
     def __init__(self, var_smoothing=1e-9):
@@ -20,17 +16,17 @@ class GaussianNB:
         self.priors_ = None
 
     def fit(self, X, y):
-        self.classes_ = np.unique(y)                        #  negative  and positive
-        n_classes = len(self.classes_)                      #  2
-        n_features = X.shape[1]                             #  column x
+        self.classes_ = np.unique(y)                        
+        n_classes = len(self.classes_)                      
+        n_features = X.shape[1]                             
 
         self.means_ = np.zeros((n_classes, n_features))
         self.vars_ = np.zeros((n_classes, n_features))      #           Age   HeartRate   BloodSugar
                                                             # Class 0    ?       ?           ?
                                                             # Class 1    ?       ?           ?
        
-        self.priors_ = np.zeros(n_classes)                  # probability class1   and   class2
-                                                            #              P(+)           P(-)
+        self.priors_ = np.zeros(n_classes)                  #              class1   and   class2
+                                                            # probability   P(+)           P(-)
 
         for i, c in enumerate(self.classes_):               #       self.classes_ =[+,-]
             X_c = X[y == c]                                 #       c  =  class   , i = index
@@ -85,11 +81,18 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,random_s
 model = GaussianNB()
 model.fit(X_train, y_train)
 
-person = [44, 60, 154, 81, 135, 2.35, 0.004]
 
-model.predict(X)
-model.predict_proba(X)
+#'Age', 'Gender', 'Heart rate', 'Systolic blood pressure' , 'Diastolic blood pressure', 'Blood sugar', 'CK-MB', 'Troponin',
+people = [
+    [28,  0,  72, 115, 75,  90,  1.2,  0.003],   # negative
+    [50,  1,  85, 135, 80, 180,  3.1,  0.012],   # negative
+    [62,  1,  95, 160, 95, 240, 18.5,  1.200],   # positive
+    [70,  1, 102, 175, 98, 310, 85.0,  3.500],   # positive
+    [65,  0,  88, 155, 92, 260, 12.4,  0.850],   # positive
+]
 
-
-
-print(f"Độ chính xác trên tập test: {model.score(X_test, y_test) * 100:.2f}%")
+for i, p in enumerate(people, 1):
+    arr = np.array([p])
+    pred = model.predict(arr)[0]
+    prob = model.predict_proba(arr)[0]
+    print(f"people {i}: {pred}  (negative={prob[0]*100:.1f}%, positive={prob[1]*100:.1f}%)")
