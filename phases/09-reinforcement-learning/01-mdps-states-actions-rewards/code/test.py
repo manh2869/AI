@@ -1,6 +1,6 @@
 import random
 
-GRID = 5
+GRID = 3
 
 
 def grid():
@@ -38,23 +38,23 @@ def random_action(actions, rng):
 
 def policy_evaluation(gamma=0.99, tol=1e-6, max_iter=2000):
     temp = grid()
-
     new_temp = [row[:] for row in temp]
-    for i in range(len(temp)):
-        for j in range(len(temp[0])):
-            if (i, j) == TERMINAL:
-                new_temp[i][j] = 0.0
-                continue
-            Vs = 0
-            v_s = temp[i][j]
-            for a in ACTIONS:
-                nr, nc, r, b = step(i, j, a)
-                Vs += 0.25 * (r + gamma * temp[nr][nc])
-            new_temp[i][j] = Vs
+    for _ in range(max_iter):
+        for i in range(len(temp)):
+            for j in range(len(temp[0])):
+                if (i, j) == TERMINAL:
+                    new_temp[i][j] = 0.0
+                    continue
+                Vs = 0
+                for a in ACTIONS:
+                    nr, nc, r, b = step(i, j, a)
+                    Vs += 0.25 * (r + gamma * temp[nr][nc])
+                new_temp[i][j] = Vs
+        temp = new_temp
     return temp
 
 
-print(policy_evaluation())
+print(policy_evaluation(max_iter=2000))
 
 
 # def rollout(rng, max_steps=200):
