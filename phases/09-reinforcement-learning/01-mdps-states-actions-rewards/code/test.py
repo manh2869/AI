@@ -19,12 +19,12 @@ ACTIONS = {
 
 def step(i, j, action):
     if (i, j) == TERMINAL:
-        return (i, j), 0.0, True
+        return i, j, 0.0, True
     dr, dc, _ = ACTIONS[action]
 
     nr = min(max(i + dr, 0), GRID - 1)
     nc = min(max(j + dc, 0), GRID - 1)
-    return (nr, nc), -1.0, (nr, nc) == TERMINAL
+    return nr, nc, -1.0, (nr, nc) == TERMINAL
 
 
 def random_action(actions, rng):
@@ -36,19 +36,25 @@ def random_action(actions, rng):
             return a, p
 
 
-def policy_evaluation(random_action, gamma=0.99, tol=1e-6, max_iter=2000):
+def policy_evaluation(gamma=0.99, tol=1e-6, max_iter=2000):
     temp = grid()
-    Vs = 0
 
+    new_temp = [row[:] for row in temp]
     for i in range(len(temp)):
         for j in range(len(temp[0])):
+            if (i, j) == TERMINAL:
+                new_temp[i][j] = 0.0
+                continue
+            Vs = 0
+            v_s = temp[i][j]
             for a in ACTIONS:
-                step(i, j, a)
-            temp[i][j] = 1
+                nr, nc, r, b = step(i, j, a)
+                Vs += 0.25 * (r + gamma * temp[nr][nc])
+            new_temp[i][j] = Vs
     return temp
 
 
-print(policy_evaluation(random_action(ACTIONS, rng)))
+print(policy_evaluation())
 
 
 # def rollout(rng, max_steps=200):
