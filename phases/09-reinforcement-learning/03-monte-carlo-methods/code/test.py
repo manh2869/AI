@@ -2,44 +2,44 @@ import random
 from collections import defaultdict
 
 GRID = 4
-TERMINAL = (3, 3)
+TERMINAL = (GRID - 1, GRID - 1)
 ACTIONS = ("up", "down", "left", "right")
 DELTAS = {"up": (-1, 0), "down": (1, 0), "left": (0, -1), "right": (0, 1)}
+rng = random.Random()
 
 
 def reset():
     return (0, 0)
 
 
-def step(state, action):
-    if state == TERMINAL:
-        return state, 0.0, True
+def step(i, j, action):
+    if (i, j) == TERMINAL:
+        return i, j, 0.0, True
     dr, dc = DELTAS[action]
-    r, c = state
+    r, c = i, j
     nr = min(max(r + dr, 0), GRID - 1)
     nc = min(max(c + dc, 0), GRID - 1)
-    return (nr, nc), -1.0, (nr, nc) == TERMINAL
+    return nr, nc, -1.0, (nr, nc) == TERMINAL
 
 
-def states():
-    return [(r, c) for r in range(GRID) for c in range(GRID)]
+def grid():
+    return [[0 for _ in range(GRID)] for _ in range(GRID)]
 
 
-def rollout(policy, rng, max_steps=200):
+def rollout(rng, max_steps=200):
     trajectory = []
-    state = reset()
+    i, j = reset()
     for _ in range(max_steps):
-        action = policy(state, rng)
-        state_next, reward, done = step(state, action)
-        trajectory.append((state, action, reward))
-        state = state_next
+        action = rng.choice(ACTIONS)
+        x, y, reward, done = step(i, j, action)
+        trajectory.append([[i, j], action, reward])
+        i, j = x, y
         if done:
             break
     return trajectory
 
 
-def random_policy(state, rng):
-    return rng.choice(ACTIONS)
+for m in rollout(rng):
+    print(m)
 
-rng = random.Random()
-print(random_policy(1,rng))
+print(len(rollout(rng)))
