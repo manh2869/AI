@@ -1,6 +1,6 @@
 import random
 
-GRID = 3
+GRID = 5
 
 
 def grid():

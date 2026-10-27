@@ -39,6 +39,8 @@ def rollout(policy, rng, max_steps=200):
     return trajectory
 
 
+
+
 def returns_from(trajectory, gamma):
     returns = []
     G = 0.0
