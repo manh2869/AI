@@ -49,7 +49,25 @@ def returns_from(trajectory, gamma):
     return returns
 
 
+def mc_policy_evaluation(episodes, policy, gamma=0.99, rng=None):
+    rng = rng or random.Random(0)
+    V = defaultdict(float)
+    counts = defaultdict(int)
+    for _ in range(episodes):
+        trajectory = rollout(rng)
+        returns = returns_from(trajectory, gamma)
+        seen = set()
+        for [[x, y], _, _], G in zip(trajectory, returns):
+            if ([x, y]) in seen:
+                continue
+            seen.add([x, y])
+            counts[[x, y]] += 1
+            V[[x, y]] += (G - V[[x, y]]) / counts[[x, y]]
+    return V, counts
+
+
 for m in rollout(rng):
     print(m)
 for m in returns_from(rollout(rng), 0.99):
     print(m)
+print(mc_policy_evaluation(200, rng.choice(ACTIONS)))
