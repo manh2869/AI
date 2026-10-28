@@ -48,23 +48,25 @@ def episode_cost(trajectory, gamma=0.99):
 def average_episode():
     m = grid()
     count = grid()
+    for _ in range(500):
+        for x in episode_cost(rollout()):
+            m[x[0]][x[1]] += x[2]
+            count[x[0]][x[1]] += 1
 
-    for x in episode_cost(rollout()):
-        m[x[0]][x[1]] += x[2]
-        count[x[0]][x[1]] += 1
+    ave = []
+    for i, j in zip(m, count):
+        temp = []
+        for x, y in zip(i, j):
+            if y == 0:
+                temp.append(0)
+            else:
+                temp.append(x / y)
+        ave.append(temp)
 
-    return m
+    print(m)
+    print(count)
+    print(ave)
+    return ave
 
 
 average_episode()
-
-
-# print(rollout())
-# for x in episode_cost(rollout()):
-#     print(x[1][2])
-
-
-# for m in rollout():
-#     print(m)
-# for m in episode_cost(rollout(), 0.99):
-#     print(m)
