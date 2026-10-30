@@ -7,53 +7,71 @@ ACTIONS = ("up", "down", "left", "right")
 DELTAS = {"up": (-1, 0), "down": (1, 0), "left": (0, -1), "right": (0, 1)}
 rng = random.Random(1)
 
-Q = defaultdict(lambda: {a: 0.0 for a in ACTIONS})
-# print(Q["a"])
+
+def grid():
+    return [[0 for _ in range(GRID)] for _ in range(GRID)]
 
 
-# def grid():
-#     return [[0 for _ in range(GRID)] for _ in range(GRID)]
+def step(i, j, action):
+    if (i, j) == TERMINAL:
+        return i, j, 0.0, True
+    dr, dc = DELTAS[action]
+    r, c = i, j
+    nr = min(max(r + dr, 0), GRID - 1)
+    nc = min(max(c + dc, 0), GRID - 1)
+    return nr, nc, -1.0, (nr, nc) == TERMINAL
 
 
-# def step(i, j, action):
-#     if (i, j) == TERMINAL:
-#         return i, j, 0.0, True
-#     dr, dc = DELTAS[action]
-#     r, c = i, j
-#     nr = min(max(r + dr, 0), GRID - 1)
-#     nc = min(max(c + dc, 0), GRID - 1)
-#     return nr, nc, -1.0, (nr, nc) == TERMINAL
+def rollout(max_steps=500):
+    trajectory = []
+    i, j = 0, 0
+    for _ in range(max_steps):
+        action = rng.choice(ACTIONS)
+        x, y, reward, done = step(i, j, action)
+        trajectory.append([i, j, action, reward])
+        i, j = x, y
+        if done:
+            break
+    return trajectory
 
 
-# def rollout(max_steps=200):
-#     trajectory = []
-#     i, j = 0, 0
-#     for _ in range(max_steps):
-#         action = rng.choice(ACTIONS)
-#         x, y, reward, done = step(i, j, action)
-#         trajectory.append([i, j, action, reward])
-#         i, j = x, y
-#         if done:
-#             break
-#     return trajectory
+def episode_cost(trajectory, gamma=0.99):
+    cost = []
+    G = 0.0
+    for i, j, a, r in reversed(trajectory):
+        G = r + gamma * G
+        cost.append([i, j, a, G])
+    cost.reverse()
+    return cost
 
 
-# def episode_cost(trajectory, gamma=0.99):
-#     cost = []
-#     G = 0.0
-#     for i, j, _, r in reversed(trajectory):
-#         G = r + gamma * G
-#         cost.append([i, j, G])
-#     cost.reverse()
-#     return cost
+def improve_policy():
+    Q = defaultdict(lambda: {a: 0.0 for a in ACTIONS})
+    count = grid()
+
+    for cost in episode_cost(rollout()):
+        Q[(cost[0], cost[1])][cost[2]] += cost[3]
+        count[cost[0]][cost[1]] += 1
+
+    return Q.items(), count
+
+
+x, y = improve_policy()
+for c in x:
+    print(c)
+print(y)
+
+t = episode_cost(rollout())
+for z in t:
+    print(z)
 
 
 # def average_episode():
 #     m = grid()
 #     count = grid()
-#     for _ in range(500):
+#     for _ in range(600):
 #         for x in episode_cost(rollout()):
-#             m[x[0]][x[1]] += x[2]
+#             m[x[0]][x[1]] += x[3]
 #             count[x[0]][x[1]] += 1
 
 #     ave = []
@@ -65,11 +83,7 @@ Q = defaultdict(lambda: {a: 0.0 for a in ACTIONS})
 #             else:
 #                 temp.append(x / y)
 #         ave.append(temp)
-
-#     print(m)
-#     print(count)
-#     print(ave)
 #     return ave
 
-
-# average_episode()
+# for i in average_episode():
+#     print(i)
