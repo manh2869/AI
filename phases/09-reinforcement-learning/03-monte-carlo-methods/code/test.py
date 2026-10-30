@@ -47,23 +47,26 @@ def episode_cost(trajectory, gamma=0.99):
 
 def improve_policy():
     Q = defaultdict(lambda: {a: 0.0 for a in ACTIONS})
-    count = grid()
+    counts = defaultdict(lambda: {a: 0 for a in ACTIONS})
 
     for cost in episode_cost(rollout()):
         Q[(cost[0], cost[1])][cost[2]] += cost[3]
-        count[cost[0]][cost[1]] += 1
+        counts[(cost[0], cost[1])][cost[2]] += 1
 
-    return Q.items(), count
+
+
+
+    def policy():
+        pass
+    
+    return Q.items(), counts.items()
 
 
 x, y = improve_policy()
-for c in x:
-    print(c)
-print(y)
-
-t = episode_cost(rollout())
-for z in t:
+for z in x:
     print(z)
+for c in y:
+    print(c)
 
 
 # def average_episode():
