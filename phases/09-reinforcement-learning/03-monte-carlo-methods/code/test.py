@@ -51,7 +51,7 @@ def episode_cost(trajectory, gamma=0.99):
 def improve_policy():
     Q = defaultdict(lambda: {a: 0.0 for a in ACTIONS})
     counts = defaultdict(lambda: {a: 0 for a in ACTIONS})
-    for _ in range(1000):
+    for _ in range(10000):
         for i, j, a, G in episode_cost(rollout(Q)):
             counts[(i, j)][a] += 1
             Q[(i, j)][a] += (G - Q[(i, j)][a]) / counts[(i, j)][a]
