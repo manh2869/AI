@@ -36,9 +36,16 @@ import random
 rng = random.Random()
 
 
-# print(init_net(9, 16, 4, rng))
+# net = init_net(2, 3, 2, rng)
 # print([[rng.gauss(0, 0.2) for _ in range(8)] for _ in range(4)])
-# print([0.0] * 4)
+net = {
+    "W1": [[0.2, 0.5], [0.1, 0.3], [0.4, 0.7]],
+    "b1": [0.1, 0.2, 0.1],
+    "W2": [[0.2, 0.4, 0.1], [0.5, 0.3, 0.6]],
+    "b2": [0.1, 0.2],
+}
+
+x = [2, 3]
 
 
 def forward(net, x):
@@ -53,3 +60,25 @@ def forward(net, x):
     return q, h
 
 
+def clone(net):
+    return {
+        "W1": [row[:] for row in net["W1"]],
+        "b1": net["b1"][:],
+        "W2": [row[:] for row in net["W2"]],
+        "b2": net["b2"][:],
+    }
+
+
+def train_step(online):
+    n_hidden = len(online["b1"])
+    n_out = len(online["b2"])
+    n_in = len(online["W1"][0])
+    print([[0.0] * n_in for _ in range(n_hidden)])
+    print([0.0] * n_hidden)
+    print([[0.0] * n_hidden for _ in range(n_out)])
+    print([0.0] * n_out)
+    total_loss = 0.0
+
+
+print(train_step(net))
+# print(forward(net, x))
