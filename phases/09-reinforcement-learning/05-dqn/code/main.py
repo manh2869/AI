@@ -38,6 +38,7 @@ def init_net(n_in, n_hidden, n_out, rng):
     }
 
 
+
 def forward(net, x):
     h = []
     for row, b in zip(net["W1"], net["b1"]):

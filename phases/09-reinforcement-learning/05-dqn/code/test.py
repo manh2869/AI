@@ -80,5 +80,5 @@ def train_step(online):
     total_loss = 0.0
 
 
-print(train_step(net))
-# print(forward(net, x))
+# print(train_step(net))
+print(forward(net, x))
