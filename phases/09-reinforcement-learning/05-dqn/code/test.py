@@ -35,15 +35,15 @@ import random
 
 rng = random.Random()
 
-
-# net = init_net(2, 3, 2, rng)
-# print([[rng.gauss(0, 0.2) for _ in range(8)] for _ in range(4)])
 net = {
     "W1": [[0.2, 0.5], [0.1, 0.3], [0.4, 0.7]],
     "b1": [0.1, 0.2, 0.1],
     "W2": [[0.2, 0.4, 0.1], [0.5, 0.3, 0.6]],
     "b2": [0.1, 0.2],
 }
+
+# net = init_net(2, 3, 2, rng)
+# print(net)
 
 x = [2, 3]
 
@@ -58,6 +58,10 @@ def forward(net, x):
         z = b + sum(w * hi for w, hi in zip(row, h))
         q.append(z)
     return q, h
+
+
+# print(forward(net, x))
+# ([1.32, 3.3899999999999997], [2.0, 1.2999999999999998, 2.9999999999999996])
 
 
 def clone(net):
@@ -81,4 +85,4 @@ def train_step(online):
 
 
 # print(train_step(net))
-print(forward(net, x))
+# print(forward(net, x))

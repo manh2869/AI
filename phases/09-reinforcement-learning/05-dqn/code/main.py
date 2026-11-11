@@ -38,7 +38,6 @@ def init_net(n_in, n_hidden, n_out, rng):
     }
 
 
-
 def forward(net, x):
     h = []
     for row, b in zip(net["W1"], net["b1"]):
@@ -152,7 +151,9 @@ def main():
             s = s_next
         returns_log.append(total)
 
-    print(f"=== DQN on 4x4 GridWorld ({episodes} episodes, batch={batch}, target sync every {sync_every} steps) ===")
+    print(
+        f"=== DQN on 4x4 GridWorld ({episodes} episodes, batch={batch}, target sync every {sync_every} steps) ==="
+    )
     print()
     print("learning curve (mean return per block of 50 episodes):")
     for i in range(0, episodes, 50):
