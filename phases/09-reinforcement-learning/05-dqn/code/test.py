@@ -1,6 +1,11 @@
+import random
+
+
+rng = random.Random()
+
 GRID = 4
 TERMINAL = (3, 3)
-ACTIONS = ("up", "down", "left", "right")
+ACTIONS = ("left", "right")
 DELTAS = {"up": (-1, 0), "down": (1, 0), "left": (0, -1), "right": (0, 1)}
 
 
@@ -31,10 +36,6 @@ def init_net(n_in, n_hidden, n_out, rng):
     }
 
 
-import random
-
-rng = random.Random()
-
 net = {
     "W1": [[0.2, 0.5], [0.1, 0.3], [0.4, 0.7]],
     "b1": [0.1, 0.2, 0.1],
@@ -64,6 +65,16 @@ def forward(net, x):
 # ([1.32, 3.3899999999999997], [2.0, 1.2999999999999998, 2.9999999999999996])
 
 
+def epsilon_greedy(net, state, rng, epsilon):
+    if rng.random() < epsilon:
+        return rng.randrange(len(ACTIONS))
+    q, _ = forward(net, state_features(state))
+    return max(range(len(ACTIONS)), key=lambda i: q[i])
+
+
+# print(epsilon_greedy(net, [1, 1], rng, 0.1))
+
+
 def clone(net):
     return {
         "W1": [row[:] for row in net["W1"]],
@@ -84,5 +95,5 @@ def train_step(online):
     total_loss = 0.0
 
 
-# print(train_step(net))
+print(train_step(net))
 # print(forward(net, x))
