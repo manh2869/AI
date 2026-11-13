@@ -1,12 +1,12 @@
 import random
 
-
-rng = random.Random()
+rng = random.Random(1)
 
 GRID = 4
 TERMINAL = (3, 3)
-ACTIONS = ("left", "right")
+ACTIONS = ("up", "down", "left", "right")
 DELTAS = {"up": (-1, 0), "down": (1, 0), "left": (0, -1), "right": (0, 1)}
+# DELTAS = {"down": (1, 0), "right": (0, 1)}
 
 
 def step(state, action):
@@ -36,12 +36,14 @@ def init_net(n_in, n_hidden, n_out, rng):
     }
 
 
-net = {
-    "W1": [[0.2, 0.5], [0.1, 0.3], [0.4, 0.7]],
-    "b1": [0.1, 0.2, 0.1],
-    "W2": [[0.2, 0.4, 0.1], [0.5, 0.3, 0.6]],
-    "b2": [0.1, 0.2],
-}
+net = init_net(2, 8, 4, rng)
+
+# net = {
+#     "W1": [[0.2, 0.5], [0.1, 0.3], [0.4, 0.7]],
+#     "b1": [0.1, 0.2, 0.1],
+#     "W2": [[0.2, 0.4, 0.1], [0.5, 0.3, 0.6]],
+#     "b2": [0.1, 0.2],
+# }
 
 # net = init_net(2, 3, 2, rng)
 # print(net)
@@ -61,8 +63,8 @@ def forward(net, x):
     return q, h
 
 
+# ([0.1282196893079478, 0.02585138478962084, 0.08119743140249976, 0.5396334075959357], [1.3849412664820477, 0.0, 0.0, 0.0, 0.15974955338866445, 0.0, 0.0, 0.0])
 # print(forward(net, x))
-# ([1.32, 3.3899999999999997], [2.0, 1.2999999999999998, 2.9999999999999996])
 
 
 def epsilon_greedy(net, state, rng, epsilon):
@@ -72,7 +74,8 @@ def epsilon_greedy(net, state, rng, epsilon):
     return max(range(len(ACTIONS)), key=lambda i: q[i])
 
 
-# print(epsilon_greedy(net, [1, 1], rng, 0.1))
+# print(epsilon_greedy(net, [1, 1], rng, 0.2([0.1282196893079478, 0.02585138478962084, 0.08119743140249976, 0.5396334075959357], [1.3849412664820477, 0.0, 0.0, 0.0, 0.15974955338866445, 0.0, 0.0, 0.0])))
+# 0,1,2,3
 
 
 def clone(net):
@@ -84,16 +87,80 @@ def clone(net):
     }
 
 
-def train_step(online):
+def train_step(online, target, batch, gamma, lr):
     n_hidden = len(online["b1"])
     n_out = len(online["b2"])
     n_in = len(online["W1"][0])
-    print([[0.0] * n_in for _ in range(n_hidden)])
-    print([0.0] * n_hidden)
-    print([[0.0] * n_hidden for _ in range(n_out)])
-    print([0.0] * n_out)
+    dW1 = [[0.0] * n_in for _ in range(n_hidden)]
+    db1 = [0.0] * n_hidden
+    dW2 = [[0.0] * n_hidden for _ in range(n_out)]
+    db2 = [0.0] * n_out
     total_loss = 0.0
+    for s, a, r, s_next, done in batch:
+        x = state_features(s)
+        q, h = forward(online, x)
+        if done:
+            y = r
+        else:
+            q_next, _ = forward(target, state_features(s_next))
+            y = r + gamma * max(q_next)
+        td_error = q[a] - y
+        total_loss += 0.5 * td_error * td_error
+
+        db2[a] += td_error
+        for j in range(n_hidden):
+            dW2[a][j] += td_error * h[j]
+
+        grad_h = [0.0] * n_hidden
+        for j in range(n_hidden):
+            if h[j] > 0:
+                grad_h[j] = td_error * online["W2"][a][j]
+
+        for j in range(n_hidden):
+            db1[j] += grad_h[j]
+            for k in range(n_in):
+                dW1[j][k] += grad_h[j] * x[k]
+
+    scale = lr / len(batch)
+    for j in range(n_hidden):
+        online["b1"][j] -= scale * db1[j]
+        for k in range(n_in):
+            online["W1"][j][k] -= scale * dW1[j][k]
+    for a in range(n_out):
+        online["b2"][a] -= scale * db2[a]
+        for j in range(n_hidden):
+            online["W2"][a][j] -= scale * dW2[a][j]
+    return total_loss / len(batch)
 
 
-print(train_step(net))
-# print(forward(net, x))
+online = clone(net)
+target = clone(online)
+buffer = []
+s = (0, 0)
+step_count = 0
+sync_every = 200
+for ep in range(10):
+    total = 0.0
+    epsilon = max(0.05, 1 - ep / 200)
+    for _ in range(50):
+        a = epsilon_greedy(online, s, rng, epsilon)
+        s_next, r, done = step(s, ACTIONS[a])
+        total += r
+        buffer.append((s, a, r, s_next, done))
+        if len(buffer) > 1000:
+            buffer.pop(0)
+        if len(buffer) >= 32:
+            mb = rng.sample(buffer, 32)
+            train_step(online, target, mb, 0.99, 0.05)
+        if step_count % sync_every:
+            target = clone(online)
+        if done:
+            break
+        s = s_next
+print(buffer)
+
+
+# [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0]]
+# [0.0, 0.0, 0.0]
+# [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+# [0.0, 0.0]

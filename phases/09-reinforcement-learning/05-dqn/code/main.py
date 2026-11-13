@@ -118,7 +118,6 @@ def main():
     n_in = GRID * GRID
     online = init_net(n_in, 32, len(ACTIONS), rng)
     target = clone(online)
-
     buffer = []
     capacity = 2000
     batch = 32
@@ -127,7 +126,6 @@ def main():
     sync_every = 200
     episodes = 400
     step_count = 0
-
     returns_log = []
     for ep in range(episodes):
         s = reset()
@@ -146,7 +144,7 @@ def main():
             step_count += 1
             if step_count % sync_every == 0:
                 target = clone(online)
-            if done:
+            if done:    
                 break
             s = s_next
         returns_log.append(total)
