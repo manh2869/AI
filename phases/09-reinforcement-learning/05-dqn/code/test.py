@@ -38,16 +38,6 @@ def init_net(n_in, n_hidden, n_out, rng):
 
 net = init_net(2, 8, 4, rng)
 
-# net = {
-#     "W1": [[0.2, 0.5], [0.1, 0.3], [0.4, 0.7]],
-#     "b1": [0.1, 0.2, 0.1],
-#     "W2": [[0.2, 0.4, 0.1], [0.5, 0.3, 0.6]],
-#     "b2": [0.1, 0.2],
-# }
-
-# net = init_net(2, 3, 2, rng)
-# print(net)
-
 x = [2, 3]
 
 
@@ -104,63 +94,61 @@ def train_step(online, target, batch, gamma, lr):
         else:
             q_next, _ = forward(target, state_features(s_next))
             y = r + gamma * max(q_next)
-        td_error = q[a] - y
-        total_loss += 0.5 * td_error * td_error
+    #     td_error = q[a] - y
+    #     total_loss += 0.5 * td_error * td_error
 
-        db2[a] += td_error
-        for j in range(n_hidden):
-            dW2[a][j] += td_error * h[j]
+    #     db2[a] += td_error
+    #     for j in range(n_hidden):
+    #         dW2[a][j] += td_error * h[j]
 
-        grad_h = [0.0] * n_hidden
-        for j in range(n_hidden):
-            if h[j] > 0:
-                grad_h[j] = td_error * online["W2"][a][j]
+    #     grad_h = [0.0] * n_hidden
+    #     for j in range(n_hidden):
+    #         if h[j] > 0:
+    #             grad_h[j] = td_error * online["W2"][a][j]
 
-        for j in range(n_hidden):
-            db1[j] += grad_h[j]
-            for k in range(n_in):
-                dW1[j][k] += grad_h[j] * x[k]
+    #     for j in range(n_hidden):
+    #         db1[j] += grad_h[j]
+    #         for k in range(n_in):
+    #             dW1[j][k] += grad_h[j] * x[k]
 
-    scale = lr / len(batch)
-    for j in range(n_hidden):
-        online["b1"][j] -= scale * db1[j]
-        for k in range(n_in):
-            online["W1"][j][k] -= scale * dW1[j][k]
-    for a in range(n_out):
-        online["b2"][a] -= scale * db2[a]
-        for j in range(n_hidden):
-            online["W2"][a][j] -= scale * dW2[a][j]
-    return total_loss / len(batch)
-
-
-online = clone(net)
-target = clone(online)
-buffer = []
-s = (0, 0)
-step_count = 0
-sync_every = 200
-for ep in range(10):
-    total = 0.0
-    epsilon = max(0.05, 1 - ep / 200)
-    for _ in range(50):
-        a = epsilon_greedy(online, s, rng, epsilon)
-        s_next, r, done = step(s, ACTIONS[a])
-        total += r
-        buffer.append((s, a, r, s_next, done))
-        if len(buffer) > 1000:
-            buffer.pop(0)
-        if len(buffer) >= 32:
-            mb = rng.sample(buffer, 32)
-            train_step(online, target, mb, 0.99, 0.05)
-        if step_count % sync_every:
-            target = clone(online)
-        if done:
-            break
-        s = s_next
-print(buffer)
+    # scale = lr / len(batch)
+    # for j in range(n_hidden):
+    #     online["b1"][j] -= scale * db1[j]
+    #     for k in range(n_in):
+    #         online["W1"][j][k] -= scale * dW1[j][k]
+    # for a in range(n_out):
+    #     online["b2"][a] -= scale * db2[a]
+    #     for j in range(n_hidden):
+    #         online["W2"][a][j] -= scale * dW2[a][j]
+    # return total_loss / len(batch)
 
 
-# [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0]]
-# [0.0, 0.0, 0.0]
-# [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-# [0.0, 0.0]
+def main():
+    online = net
+    target = clone(online)
+    buffer = []
+    s = (0, 0)
+    step_count = 0
+    sync_every = 200
+    for ep in range(10):
+        total = 0.0
+        epsilon = max(0.05, 1 - ep / 200)
+        for _ in range(50):
+            a = epsilon_greedy(online, s, rng, epsilon)
+            s_next, r, done = step(s, ACTIONS[a])
+            total += r
+            buffer.append((s, a, r, s_next, done))
+            if len(buffer) > 1000:
+                buffer.pop(0)
+            if len(buffer) >= 32:
+                mb = rng.sample(buffer, 32)
+            # if step_count % sync_every:
+            #     target = clone(online)
+            if done:
+                break
+            s = s_next
+
+
+# main()
+print(forward(net, state_features([2, 2])))
+# train_step(online, target, mb, 0.99, 0.05)
