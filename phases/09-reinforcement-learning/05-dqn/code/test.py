@@ -36,6 +36,7 @@ def init_net(n_in, n_hidden, n_out, rng):
     }
 
 
+<<<<<<< HEAD
 net = init_net(2, 8, 4, rng)
 
 # net = {
@@ -51,6 +52,8 @@ net = init_net(2, 8, 4, rng)
 x = [2, 3]
 
 
+=======
+>>>>>>> f20fc60 (15/11/2026)
 def forward(net, x):
     h = []
     for row, b in zip(net["W1"], net["b1"]):
@@ -133,6 +136,7 @@ def train_step(online, target, batch, gamma, lr):
     return total_loss / len(batch)
 
 
+<<<<<<< HEAD
 online = clone(net)
 target = clone(online)
 buffer = []
@@ -158,9 +162,37 @@ for ep in range(10):
             break
         s = s_next
 print(buffer)
+=======
+>>>>>>> f20fc60 (15/11/2026)
 
+# online = init_net(16, 32, 4, rng)
+# target = clone(online)
+# buffer = []
+# s = (0, 0)
+# step_count = 0
+# sync_every = 200
+# for ep in range(10):
+#     total = 0.0
+#     epsilon = max(0.05, 1 - ep / 200)
+#     for _ in range(50):
+#         a = epsilon_greedy(online, s, rng, epsilon)
+#         s_next, r, done = step(s, ACTIONS[a])
+#         total += r
+#         buffer.append((s, a, r, s_next, done))
+#         if len(buffer) > 1000:
+#             buffer.pop(0)
+#         if len(buffer) >= 32:
+#             mb = rng.sample(buffer, 32)
+#         # if step_count % sync_every:
+#         #     target = clone(online)
+#         if done:
+#             break
+#         s = s_next
 
+<<<<<<< HEAD
 # [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0]]
 # [0.0, 0.0, 0.0]
 # [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
 # [0.0, 0.0]
+=======
+>>>>>>> f20fc60 (15/11/2026)
