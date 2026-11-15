@@ -6,7 +6,6 @@ GRID = 4
 TERMINAL = (3, 3)
 ACTIONS = ("up", "down", "left", "right")
 DELTAS = {"up": (-1, 0), "down": (1, 0), "left": (0, -1), "right": (0, 1)}
-# DELTAS = {"down": (1, 0), "right": (0, 1)}
 
 
 def step(state, action):
@@ -29,31 +28,17 @@ def state_features(state):
 
 def init_net(n_in, n_hidden, n_out, rng):
     return {
-        "W1": [[rng.gauss(0, 0.2) for _ in range(n_in)] for _ in range(n_hidden)],
+        "W1": [
+            [rng.randint(-20, 20) / 100 for _ in range(n_in)] for _ in range(n_hidden)
+        ],
         "b1": [0.0] * n_hidden,
-        "W2": [[rng.gauss(0, 0.2) for _ in range(n_hidden)] for _ in range(n_out)],
+        "W2": [
+            [rng.randint(-20, 20) / 100 for _ in range(n_hidden)] for _ in range(n_out)
+        ],
         "b2": [0.0] * n_out,
     }
 
 
-<<<<<<< HEAD
-net = init_net(2, 8, 4, rng)
-
-# net = {
-#     "W1": [[0.2, 0.5], [0.1, 0.3], [0.4, 0.7]],
-#     "b1": [0.1, 0.2, 0.1],
-#     "W2": [[0.2, 0.4, 0.1], [0.5, 0.3, 0.6]],
-#     "b2": [0.1, 0.2],
-# }
-
-# net = init_net(2, 3, 2, rng)
-# print(net)
-
-x = [2, 3]
-
-
-=======
->>>>>>> f20fc60 (15/11/2026)
 def forward(net, x):
     h = []
     for row, b in zip(net["W1"], net["b1"]):
@@ -66,19 +51,11 @@ def forward(net, x):
     return q, h
 
 
-# ([0.1282196893079478, 0.02585138478962084, 0.08119743140249976, 0.5396334075959357], [1.3849412664820477, 0.0, 0.0, 0.0, 0.15974955338866445, 0.0, 0.0, 0.0])
-# print(forward(net, x))
-
-
 def epsilon_greedy(net, state, rng, epsilon):
     if rng.random() < epsilon:
         return rng.randrange(len(ACTIONS))
     q, _ = forward(net, state_features(state))
     return max(range(len(ACTIONS)), key=lambda i: q[i])
-
-
-# print(epsilon_greedy(net, [1, 1], rng, 0.2([0.1282196893079478, 0.02585138478962084, 0.08119743140249976, 0.5396334075959357], [1.3849412664820477, 0.0, 0.0, 0.0, 0.15974955338866445, 0.0, 0.0, 0.0])))
-# 0,1,2,3
 
 
 def clone(net):
@@ -136,63 +113,35 @@ def train_step(online, target, batch, gamma, lr):
     return total_loss / len(batch)
 
 
-<<<<<<< HEAD
-online = clone(net)
+online = init_net(16, 32, 4, rng)
 target = clone(online)
+
 buffer = []
-s = (0, 0)
 step_count = 0
-sync_every = 200
+
+batch_size = 32
+
+sync_every = 4
+
 for ep in range(10):
-    total = 0.0
+    s = (0, 0)
+    total = 0
     epsilon = max(0.05, 1 - ep / 200)
-    for _ in range(50):
+    for t in range(50):
         a = epsilon_greedy(online, s, rng, epsilon)
+
         s_next, r, done = step(s, ACTIONS[a])
+
         total += r
+
         buffer.append((s, a, r, s_next, done))
+
         if len(buffer) > 1000:
             buffer.pop(0)
-        if len(buffer) >= 32:
-            mb = rng.sample(buffer, 32)
-            train_step(online, target, mb, 0.99, 0.05)
-        if step_count % sync_every:
-            target = clone(online)
-        if done:
-            break
+
+        if len(buffer) >= batch_size:
+            mb = rng.sample(buffer, batch_size)
+            loss = train_step(online, target, mb, gamma=0.99, lr=0.05)
+            print(loss)
+            step_count += 1
         s = s_next
-print(buffer)
-=======
->>>>>>> f20fc60 (15/11/2026)
-
-# online = init_net(16, 32, 4, rng)
-# target = clone(online)
-# buffer = []
-# s = (0, 0)
-# step_count = 0
-# sync_every = 200
-# for ep in range(10):
-#     total = 0.0
-#     epsilon = max(0.05, 1 - ep / 200)
-#     for _ in range(50):
-#         a = epsilon_greedy(online, s, rng, epsilon)
-#         s_next, r, done = step(s, ACTIONS[a])
-#         total += r
-#         buffer.append((s, a, r, s_next, done))
-#         if len(buffer) > 1000:
-#             buffer.pop(0)
-#         if len(buffer) >= 32:
-#             mb = rng.sample(buffer, 32)
-#         # if step_count % sync_every:
-#         #     target = clone(online)
-#         if done:
-#             break
-#         s = s_next
-
-<<<<<<< HEAD
-# [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0]]
-# [0.0, 0.0, 0.0]
-# [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-# [0.0, 0.0]
-=======
->>>>>>> f20fc60 (15/11/2026)
