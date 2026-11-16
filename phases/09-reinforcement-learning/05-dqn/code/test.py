@@ -84,33 +84,35 @@ def train_step(online, target, batch, gamma, lr):
         else:
             q_next, _ = forward(target, state_features(s_next))
             y = r + gamma * max(q_next)
+
         td_error = q[a] - y
         total_loss += 0.5 * td_error * td_error
+        print(q, "    ", q_next)
 
-        db2[a] += td_error
-        for j in range(n_hidden):
-            dW2[a][j] += td_error * h[j]
+    #     db2[a] += td_error
+    #     for j in range(n_hidden):
+    #         dW2[a][j] += td_error * h[j]
 
-        grad_h = [0.0] * n_hidden
-        for j in range(n_hidden):
-            if h[j] > 0:
-                grad_h[j] = td_error * online["W2"][a][j]
+    #     grad_h = [0.0] * n_hidden
+    #     for j in range(n_hidden):
+    #         if h[j] > 0:
+    #             grad_h[j] = td_error * online["W2"][a][j]
 
-        for j in range(n_hidden):
-            db1[j] += grad_h[j]
-            for k in range(n_in):
-                dW1[j][k] += grad_h[j] * x[k]
+    #     for j in range(n_hidden):
+    #         db1[j] += grad_h[j]
+    #         for k in range(n_in):
+    #             dW1[j][k] += grad_h[j] * x[k]
 
-    scale = lr / len(batch)
-    for j in range(n_hidden):
-        online["b1"][j] -= scale * db1[j]
-        for k in range(n_in):
-            online["W1"][j][k] -= scale * dW1[j][k]
-    for a in range(n_out):
-        online["b2"][a] -= scale * db2[a]
-        for j in range(n_hidden):
-            online["W2"][a][j] -= scale * dW2[a][j]
-    return total_loss / len(batch)
+    # scale = lr / len(batch)
+    # for j in range(n_hidden):
+    #     online["b1"][j] -= scale * db1[j]
+    #     for k in range(n_in):
+    #         online["W1"][j][k] -= scale * dW1[j][k]
+    # for a in range(n_out):
+    #     online["b2"][a] -= scale * db2[a]
+    #     for j in range(n_hidden):
+    #         online["W2"][a][j] -= scale * dW2[a][j]
+    # return total_loss / len(batch)
 
 
 online = init_net(16, 32, 4, rng)
@@ -141,7 +143,9 @@ for ep in range(10):
 
         if len(buffer) >= batch_size:
             mb = rng.sample(buffer, batch_size)
-            loss = train_step(online, target, mb, gamma=0.99, lr=0.05)
-            print(loss)
+            # loss = train_step(online, target, mb, gamma=0.99, lr=0.05)
+            # print(loss)
             step_count += 1
         s = s_next
+
+train_step(online, target, mb, 0.99, 0.05)
