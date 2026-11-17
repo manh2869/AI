@@ -87,7 +87,9 @@ def train_step(online, target, batch, gamma, lr):
 
         td_error = q[a] - y
         total_loss += 0.5 * td_error * td_error
-        print(q, "    ", q_next)
+
+        # print(q, "    ", q_next)
+        # print(total_loss, "   ", td_error)
 
     #     db2[a] += td_error
     #     for j in range(n_hidden):
