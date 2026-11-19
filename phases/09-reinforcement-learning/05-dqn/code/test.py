@@ -92,10 +92,10 @@ def train_step(online, target, batch, gamma, lr):
         for j in range(n_hidden):
             dW2[a][j] += td_error * h[j]
 
-    #     grad_h = [0.0] * n_hidden
-    #     for j in range(n_hidden):
-    #         if h[j] > 0:
-    #             grad_h[j] = td_error * online["W2"][a][j]
+        grad_h = [0.0] * n_hidden
+        for j in range(n_hidden):
+            if h[j] > 0:
+                grad_h[j] = td_error * online["W2"][a][j]
 
     #     for j in range(n_hidden):
     #         db1[j] += grad_h[j]
@@ -147,4 +147,4 @@ for ep in range(10):
             step_count += 1
         s = s_next
 
-train_step(online, target, mb, 0.99, 0.05)
+print(train_step(online, target, mb, 0.99, 0.05))
