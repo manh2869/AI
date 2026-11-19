@@ -97,21 +97,24 @@ def train_step(online, target, batch, gamma, lr):
             if h[j] > 0:
                 grad_h[j] = td_error * online["W2"][a][j]
 
-    #     for j in range(n_hidden):
-    #         db1[j] += grad_h[j]
-    #         for k in range(n_in):
-    #             dW1[j][k] += grad_h[j] * x[k]
-
-    # scale = lr / len(batch)
-    # for j in range(n_hidden):
-    #     online["b1"][j] -= scale * db1[j]
-    #     for k in range(n_in):
-    #         online["W1"][j][k] -= scale * dW1[j][k]
-    # for a in range(n_out):
-    #     online["b2"][a] -= scale * db2[a]
-    #     for j in range(n_hidden):
-    #         online["W2"][a][j] -= scale * dW2[a][j]
-    # return total_loss / len(batch)
+        for j in range(n_hidden):
+            db1[j] += grad_h[j]
+            for k in range(n_in):
+                dW1[j][k] += grad_h[j] * x[k]
+    # print(dW1)
+    # print(dW2)
+    # print(db1)
+    # print(db2)
+    scale = lr / len(batch)
+    for j in range(n_hidden):
+        online["b1"][j] -= scale * db1[j]
+        for k in range(n_in):
+            online["W1"][j][k] -= scale * dW1[j][k]
+    for a in range(n_out):
+        online["b2"][a] -= scale * db2[a]
+        for j in range(n_hidden):
+            online["W2"][a][j] -= scale * dW2[a][j]
+    return total_loss / len(batch)
 
 
 online = init_net(16, 32, 4, rng)
