@@ -74,7 +74,7 @@ def rollout(theta, rng, max_steps=100):
 def returns_to_go(traj, gamma):
     G = 0.0
     out = []
-    for _, _, r, _ in reversed(traj):
+    for _, _, r, _ in reversed(traj):  #  end ->   begin
         G = r + gamma * G
         out.append(G)
     out.reverse()
@@ -128,7 +128,9 @@ def print_policy(policy, title):
 
 
 def block_mean(xs, block):
-    return [sum(xs[i : i + block]) / block for i in range(0, len(xs) - block + 1, block)]
+    return [
+        sum(xs[i : i + block]) / block for i in range(0, len(xs) - block + 1, block)
+    ]
 
 
 def main():
@@ -138,7 +140,9 @@ def main():
     rng = random.Random(42)
     theta_b, r_base = reinforce(episodes, use_baseline=True, rng=rng)
 
-    print(f"=== REINFORCE on 4x4 GridWorld, {episodes} episodes, lr=0.05, gamma=0.99 ===")
+    print(
+        f"=== REINFORCE on 4x4 GridWorld, {episodes} episodes, lr=0.05, gamma=0.99 ==="
+    )
     print()
     print("learning curves (mean return per 200 episodes):")
     for i, (a, b) in enumerate(zip(block_mean(r_plain, 200), block_mean(r_base, 200))):
@@ -147,7 +151,9 @@ def main():
     print()
     print_policy(greedy_policy(theta_b), "final greedy policy (with-baseline)")
     print()
-    print(f"final mean return (last 200 eps): vanilla={sum(r_plain[-200:])/200:.2f}   with-baseline={sum(r_base[-200:])/200:.2f}")
+    print(
+        f"final mean return (last 200 eps): vanilla={sum(r_plain[-200:])/200:.2f}   with-baseline={sum(r_base[-200:])/200:.2f}"
+    )
     print("(optimal return on this 4x4 GridWorld = -6.0)")
 
 
