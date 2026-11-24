@@ -94,6 +94,14 @@ def returns_to_go(traj, gamma):
 # print(returns_to_go(rollout(init_theta(rng), rng), 0.9))
 
 
+# theta = init_theta(rng)
+
+# traj = rollout(theta, rng)
+# returns = returns_to_go(traj, 0.99)
+# print(traj)
+# print(returns)
+
+
 def reinforce(episodes, lr=0.05, gamma=0.99, use_baseline=False, rng=None):
     rng = rng or random.Random(0)
     theta = init_theta(rng)
@@ -111,4 +119,6 @@ def reinforce(episodes, lr=0.05, gamma=0.99, use_baseline=False, rng=None):
                 for j in range(N_FEAT):
                     theta[i][j] += lr * adv * grad * x[j]
         returns_log.append(returns[0] if returns else 0.0)
-    return theta, returns_log
+    return theta
+
+
